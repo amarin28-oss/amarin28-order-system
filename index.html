@@ -18,11 +18,17 @@
         }
         button {
             padding: 10px;
-            margin-top: 10px;
-            background-color: green;
+            margin: 10px 5px;
             color: white;
             border: none;
             border-radius: 5px;
+            cursor: pointer;
+        }
+        .order-btn {
+            background-color: green;
+        }
+        .reset-btn {
+            background-color: red;
         }
     </style>
 </head>
@@ -58,7 +64,9 @@
 <input type="number" id="ketchup" min="0" value="0">
 
 <br>
-<button onclick="calculateTotal()">Place Order</button>
+
+<button class="order-btn" onclick="calculateTotal()">Place Order</button>
+<button class="reset-btn" onclick="resetOrder()">Start Over</button>
 
 <h2 id="output"></h2>
 
@@ -109,6 +117,21 @@ function calculateTotal() {
     orderText += "<br>Total: $" + total.toFixed(2);
 
     document.getElementById("output").innerHTML = orderText;
+}
+
+function resetOrder() {
+
+    // Reset dropdowns
+    document.getElementById("sandwich").selectedIndex = 0;
+    document.getElementById("drink").selectedIndex = 0;
+    document.getElementById("fries").selectedIndex = 0;
+
+    // Reset ketchup number
+    document.getElementById("ketchup").value = 0;
+
+    // Clear output text
+    document.getElementById("output").innerHTML = "";
+
 }
 </script>
 
