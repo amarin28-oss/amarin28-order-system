@@ -1,6 +1,7 @@
 <script>
 
 let allOrders = [];
+let currentOrder = {};
 
 function calculateTotal() {
 
@@ -9,24 +10,9 @@ function calculateTotal() {
     let fries = document.getElementById("fries").value;
     let ketchup = parseInt(document.getElementById("ketchup").value) || 0;
 
-    const sandwichPrices = {
-        chicken: 5.25,
-        beef: 6.25,
-        tofu: 5.75
-    };
-
-    const drinkPrices = {
-        small: 1.00,
-        medium: 1.50,
-        large: 2.00
-    };
-
-    const friesPrices = {
-        none: 0,
-        small: 1.00,
-        medium: 1.75,
-        large: 2.25
-    };
+    const sandwichPrices = { chicken:5.25, beef:6.25, tofu:5.75 };
+    const drinkPrices = { small:1.00, medium:1.50, large:2.00 };
+    const friesPrices = { none:0, small:1.00, medium:1.75, large:2.25 };
 
     let sandwich_price = sandwichPrices[sandwich];
     let drink_price = drinkPrices[drink];
@@ -35,78 +21,59 @@ function calculateTotal() {
 
     let total = sandwich_price + drink_price + fries_price + ketchup_price;
 
-    let order = {
-        sandwich: sandwich,
-        drink: drink,
-        fries: fries,
-        ketchup: ketchup,
-        total: total
-    };
+    currentOrder = { sandwich, drink, fries, ketchup, total };
 
     let orderText = "<strong>Your order:</strong><br>";
     orderText += "- " + sandwich + " sandwich<br>";
     orderText += "- " + drink + " drink<br>";
-
-    if (fries !== "none") {
-        orderText += "- " + fries + " fries<br>";
-    }
-
-    if (ketchup > 0) {
-        orderText += "- " + ketchup + " ketchup packs<br>";
-    }
-
+    if (fries !== "none") orderText += "- " + fries + " fries<br>";
+    if (ketchup > 0) orderText += "- " + ketchup + " ketchup packs<br>";
     orderText += "<br><strong>Total: $" + total.toFixed(2) + "</strong><br><br>";
 
-    orderText += '<button onclick="confirmOrder()">Confirm Order</button>';
+    orderText += '<button onclick="checkOrder()">Is this correct?</button>';
 
     document.getElementById("output").innerHTML = orderText;
+}
 
-    // Save temporarily
-    window.currentOrder = order;
+function checkOrder() {
+    let output = document.getElementById("output");
+    output.innerHTML = "Is this correct?<br><br>" +
+        '<button onclick="confirmOrder()">Yes</button> ' +
+        '<button onclick="redoOrder()">No</button>';
 }
 
 function confirmOrder() {
-
-    allOrders.push(window.currentOrder);
-
-    let message = "✅ Order confirmed!<br><br>";
-    message += "You have placed " + allOrders.length + " order(s).<br><br>";
-    message += '<button onclick="showAllOrders()">View All Orders</button>';
-
-    document.getElementById("output").innerHTML = message;
-
+    allOrders.push(currentOrder);
+    document.getElementById("output").innerHTML = "✅ Order confirmed!<br><br>" +
+        'You have placed ' + allOrders.length + ' order(s).<br><br>' +
+        '<button onclick="showAllOrders()">View All Orders</button>';
     resetOrder();
 }
 
+function redoOrder() {
+    resetOrder();
+    document.getElementById("output").innerHTML = "Order reset. Please place your order again.";
+}
+
 function showAllOrders() {
-
     let text = "<strong>All Orders:</strong><br><br>";
-
     allOrders.forEach((order, index) => {
         text += "Order #" + (index + 1) + "<br>";
         text += "- " + order.sandwich + " sandwich<br>";
         text += "- " + order.drink + " drink<br>";
-
-        if (order.fries !== "none") {
-            text += "- " + order.fries + " fries<br>";
-        }
-
-        if (order.ketchup > 0) {
-            text += "- " + order.ketchup + " ketchup packs<br>";
-        }
-
+        if (order.fries !== "none") text += "- " + order.fries + " fries<br>";
+        if (order.ketchup > 0) text += "- " + order.ketchup + " ketchup packs<br>";
         text += "Total: $" + order.total.toFixed(2) + "<br><br>";
     });
-
     document.getElementById("output").innerHTML = text;
 }
 
 function resetOrder() {
-
     document.getElementById("sandwich").selectedIndex = 0;
     document.getElementById("drink").selectedIndex = 0;
     document.getElementById("fries").selectedIndex = 0;
     document.getElementById("ketchup").value = 0;
+    currentOrder = {};
 }
 
 </script>
