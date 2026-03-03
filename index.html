@@ -1,5 +1,78 @@
-<script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurant Order</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .box {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px gray;
+        }
+        button {
+            padding: 10px;
+            margin: 10px 5px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .order-btn {
+            background-color: green;
+        }
+        .reset-btn {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
 
+<h1>Restaurant Order System 🍔</h1>
+
+<div class="box">
+
+<h3>Choose Sandwich</h3>
+<select id="sandwich">
+    <option value="chicken">Chicken ($5.25)</option>
+    <option value="beef">Beef ($6.25)</option>
+    <option value="tofu">Tofu ($5.75)</option>
+</select>
+
+<h3>Choose Drink</h3>
+<select id="drink">
+    <option value="small">Small ($1.00)</option>
+    <option value="medium">Medium ($1.50)</option>
+    <option value="large">Large ($2.00)</option>
+</select>
+
+<h3>Fries</h3>
+<select id="fries">
+    <option value="none">No Fries</option>
+    <option value="small">Small ($1.00)</option>
+    <option value="medium">Medium ($1.75)</option>
+    <option value="large">Large ($2.25)</option>
+</select>
+
+<h3>Ketchup Packs ($0.25 each)</h3>
+<input type="number" id="ketchup" min="0" value="0">
+
+<br>
+
+<button class="order-btn" onclick="calculateTotal()">Place Order</button>
+<button class="reset-btn" onclick="resetOrder()">Start Over</button>
+
+<h2 id="output"></h2>
+
+</div>
+
+<script>
 let allOrders = [];
 let currentOrder = {};
 
@@ -36,8 +109,7 @@ function calculateTotal() {
 }
 
 function checkOrder() {
-    let output = document.getElementById("output");
-    output.innerHTML = "Is this correct?<br><br>" +
+    document.getElementById("output").innerHTML = "Is this correct?<br><br>" +
         '<button onclick="confirmOrder()">Yes</button> ' +
         '<button onclick="redoOrder()">No</button>';
 }
@@ -75,5 +147,7 @@ function resetOrder() {
     document.getElementById("ketchup").value = 0;
     currentOrder = {};
 }
-
 </script>
+
+</body>
+</html>
