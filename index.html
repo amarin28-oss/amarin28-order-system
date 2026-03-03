@@ -4,31 +4,70 @@
     <title>Restaurant Order</title>
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 30px;
+            color: #333;
         }
         .box {
             background: white;
-            padding: 20px;
-            margin: 20px auto;
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px gray;
+            padding: 30px 20px;
+            margin: 30px auto;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h3 {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        select, input[type=number] {
+            padding: 8px 10px;
+            margin: 10px 0;
+            width: 80%;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
         }
         button {
-            padding: 10px;
+            padding: 10px 15px;
             margin: 10px 5px;
-            color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
         }
-        .order-btn {
-            background-color: green;
+        button:hover {
+            opacity: 0.85;
         }
-        .reset-btn {
-            background-color: red;
+        .order-btn { background-color: #28a745; color: white; }
+        .reset-btn { background-color: #dc3545; color: white; }
+        .yes-btn { background-color: #007bff; color: white; }
+        .no-btn { background-color: #ffc107; color: white; color: #333; }
+        .confirm-btn { background-color: #17a2b8; color: white; }
+        #output {
+            margin-top: 20px;
+            text-align: left;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 50px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+        @media (max-width: 500px){
+            select, input[type=number] {
+                width: 100%;
+            }
+            .box {
+                padding: 20px 15px;
+            }
         }
     </style>
 </head>
@@ -38,38 +77,36 @@
 
 <div class="box">
 
-<h3>Choose Sandwich</h3>
-<select id="sandwich">
-    <option value="chicken">Chicken ($5.25)</option>
-    <option value="beef">Beef ($6.25)</option>
-    <option value="tofu">Tofu ($5.75)</option>
-</select>
+    <h3>Choose Sandwich</h3>
+    <select id="sandwich">
+        <option value="chicken">Chicken ($5.25)</option>
+        <option value="beef">Beef ($6.25)</option>
+        <option value="tofu">Tofu ($5.75)</option>
+    </select>
 
-<h3>Choose Drink</h3>
-<select id="drink">
-    <option value="small">Small ($1.00)</option>
-    <option value="medium">Medium ($1.50)</option>
-    <option value="large">Large ($2.00)</option>
-</select>
+    <h3>Choose Drink</h3>
+    <select id="drink">
+        <option value="small">Small ($1.00)</option>
+        <option value="medium">Medium ($1.50)</option>
+        <option value="large">Large ($2.00)</option>
+    </select>
 
-<h3>Fries</h3>
-<select id="fries">
-    <option value="none">No Fries</option>
-    <option value="small">Small ($1.00)</option>
-    <option value="medium">Medium ($1.75)</option>
-    <option value="large">Large ($2.25)</option>
-</select>
+    <h3>Fries</h3>
+    <select id="fries">
+        <option value="none">No Fries</option>
+        <option value="small">Small ($1.00)</option>
+        <option value="medium">Medium ($1.75)</option>
+        <option value="large">Large ($2.25)</option>
+    </select>
 
-<h3>Ketchup Packs ($0.25 each)</h3>
-<input type="number" id="ketchup" min="0" value="0">
+    <h3>Ketchup Packs ($0.25 each)</h3>
+    <input type="number" id="ketchup" min="0" value="0">
 
-<br>
+    <br>
+    <button class="order-btn" onclick="calculateTotal()">Place Order</button>
+    <button class="reset-btn" onclick="resetOrder()">Start Over</button>
 
-<button class="order-btn" onclick="calculateTotal()">Place Order</button>
-<button class="reset-btn" onclick="resetOrder()">Start Over</button>
-
-<h2 id="output"></h2>
-
+    <div id="output"></div>
 </div>
 
 <script>
@@ -77,7 +114,6 @@ let allOrders = [];
 let currentOrder = {};
 
 function calculateTotal() {
-
     let sandwich = document.getElementById("sandwich").value;
     let drink = document.getElementById("drink").value;
     let fries = document.getElementById("fries").value;
@@ -91,51 +127,57 @@ function calculateTotal() {
     let drink_price = drinkPrices[drink];
     let fries_price = friesPrices[fries];
     let ketchup_price = ketchup * 0.25;
-
     let total = sandwich_price + drink_price + fries_price + ketchup_price;
 
     currentOrder = { sandwich, drink, fries, ketchup, total };
 
-    let orderText = "<strong>Your order:</strong><br>";
-    orderText += "- " + sandwich + " sandwich<br>";
-    orderText += "- " + drink + " drink<br>";
-    if (fries !== "none") orderText += "- " + fries + " fries<br>";
-    if (ketchup > 0) orderText += "- " + ketchup + " ketchup packs<br>";
-    orderText += "<br><strong>Total: $" + total.toFixed(2) + "</strong><br><br>";
+    let orderText = `<strong>Your order:</strong><br>
+                     - ${sandwich} sandwich<br>
+                     - ${drink} drink<br>`;
+    if(fries !== "none") orderText += `- ${fries} fries<br>`;
+    if(ketchup > 0) orderText += `- ${ketchup} ketchup packs<br>`;
+    orderText += `<br><strong>Total: $${total.toFixed(2)}</strong><br><br>`;
 
-    orderText += '<button onclick="checkOrder()">Is this correct?</button>';
+    orderText += `<button class="yes-btn" onclick="checkOrder()">Is this correct?</button>`;
 
     document.getElementById("output").innerHTML = orderText;
 }
 
 function checkOrder() {
-    document.getElementById("output").innerHTML = "Is this correct?<br><br>" +
-        '<button onclick="confirmOrder()">Yes</button> ' +
-        '<button onclick="redoOrder()">No</button>';
+    document.getElementById("output").innerHTML = `
+        Is this correct?<br><br>
+        <button class="yes-btn" onclick="confirmOrder()">Yes</button>
+        <button class="no-btn" onclick="redoOrder()">No</button>
+    `;
 }
 
 function confirmOrder() {
     allOrders.push(currentOrder);
-    document.getElementById("output").innerHTML = "✅ Order confirmed!<br><br>" +
-        'You have placed ' + allOrders.length + ' order(s).<br><br>' +
-        '<button onclick="showAllOrders()">View All Orders</button>';
+    document.getElementById("output").innerHTML = `
+        ✅ Order confirmed!<br><br>
+        You have placed ${allOrders.length} order(s).<br><br>
+        <button class="confirm-btn" onclick="showAllOrders()">View All Orders</button>
+    `;
     resetOrder();
 }
 
 function redoOrder() {
     resetOrder();
-    document.getElementById("output").innerHTML = "Order reset. Please place your order again.";
+    document.getElementById("output").innerHTML = `
+        Order reset. Please place your order again.
+    `;
 }
 
 function showAllOrders() {
-    let text = "<strong>All Orders:</strong><br><br>";
+    let text = `<strong>All Orders:</strong><br><br>`;
     allOrders.forEach((order, index) => {
-        text += "Order #" + (index + 1) + "<br>";
-        text += "- " + order.sandwich + " sandwich<br>";
-        text += "- " + order.drink + " drink<br>";
-        if (order.fries !== "none") text += "- " + order.fries + " fries<br>";
-        if (order.ketchup > 0) text += "- " + order.ketchup + " ketchup packs<br>";
-        text += "Total: $" + order.total.toFixed(2) + "<br><br>";
+        text += `<div style="margin-bottom:15px;">
+                    <strong>Order #${index+1}</strong><br>
+                    - ${order.sandwich} sandwich<br>
+                    - ${order.drink} drink<br>`;
+        if(order.fries !== "none") text += `- ${order.fries} fries<br>`;
+        if(order.ketchup > 0) text += `- ${order.ketchup} ketchup packs<br>`;
+        text += `Total: $${order.total.toFixed(2)}<br></div>`;
     });
     document.getElementById("output").innerHTML = text;
 }
