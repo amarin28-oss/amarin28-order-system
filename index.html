@@ -1,112 +1,53 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Restaurant Order</title>
-    <style>
-        body {
-            font-family: Arial;
-            background-color: #f4f4f4;
-            text-align: center;
-        }
-        .box {
-            background: white;
-            padding: 20px;
-            margin: 20px auto;
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px gray;
-        }
-        button {
-            padding: 10px;
-            margin: 10px 5px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .order-btn {
-            background-color: green;
-        }
-        .reset-btn {
-            background-color: red;
-        }
-    </style>
-</head>
-<body>
-
-<h1>Restaurant Order System 🍔</h1>
-
-<div class="box">
-
-<h3>Choose Sandwich</h3>
-<select id="sandwich">
-    <option value="chicken">Chicken ($5.25)</option>
-    <option value="beef">Beef ($6.25)</option>
-    <option value="tofu">Tofu ($5.75)</option>
-</select>
-
-<h3>Choose Drink</h3>
-<select id="drink">
-    <option value="small">Small ($1.00)</option>
-    <option value="medium">Medium ($1.50)</option>
-    <option value="large">Large ($2.00)</option>
-</select>
-
-<h3>Fries</h3>
-<select id="fries">
-    <option value="none">No Fries</option>
-    <option value="small">Small ($1.00)</option>
-    <option value="medium">Medium ($1.75)</option>
-    <option value="large">Large ($2.25)</option>
-</select>
-
-<h3>Ketchup Packs ($0.25 each)</h3>
-<input type="number" id="ketchup" min="0" value="0">
-
-<br>
-
-<button class="order-btn" onclick="calculateTotal()">Place Order</button>
-<button class="reset-btn" onclick="resetOrder()">Start Over</button>
-
-<h2 id="output"></h2>
-
-</div>
-
 <script>
+
+let allOrders = [];
+
 function calculateTotal() {
 
     let sandwich = document.getElementById("sandwich").value;
     let drink = document.getElementById("drink").value;
     let fries = document.getElementById("fries").value;
-    let ketchup = parseInt(document.getElementById("ketchup").value);
+    let ketchup = parseInt(document.getElementById("ketchup").value) || 0;
 
-    let sandwich_price = 0;
-    let drink_price = 0;
-    let fries_price = 0;
+    const sandwichPrices = {
+        chicken: 5.25,
+        beef: 6.25,
+        tofu: 5.75
+    };
+
+    const drinkPrices = {
+        small: 1.00,
+        medium: 1.50,
+        large: 2.00
+    };
+
+    const friesPrices = {
+        none: 0,
+        small: 1.00,
+        medium: 1.75,
+        large: 2.25
+    };
+
+    let sandwich_price = sandwichPrices[sandwich];
+    let drink_price = drinkPrices[drink];
+    let fries_price = friesPrices[fries];
     let ketchup_price = ketchup * 0.25;
-
-    // Sandwich pricing
-    if (sandwich == "chicken") sandwich_price = 5.25;
-    if (sandwich == "beef") sandwich_price = 6.25;
-    if (sandwich == "tofu") sandwich_price = 5.75;
-
-    // Drink pricing
-    if (drink == "small") drink_price = 1.00;
-    if (drink == "medium") drink_price = 1.50;
-    if (drink == "large") drink_price = 2.00;
-
-    // Fries pricing
-    if (fries == "small") fries_price = 1.00;
-    if (fries == "medium") fries_price = 1.75;
-    if (fries == "large") fries_price = 2.25;
 
     let total = sandwich_price + drink_price + fries_price + ketchup_price;
 
-    let orderText = "Your order:<br>";
+    let order = {
+        sandwich: sandwich,
+        drink: drink,
+        fries: fries,
+        ketchup: ketchup,
+        total: total
+    };
+
+    let orderText = "<strong>Your order:</strong><br>";
     orderText += "- " + sandwich + " sandwich<br>";
     orderText += "- " + drink + " drink<br>";
 
-    if (fries != "none") {
+    if (fries !== "none") {
         orderText += "- " + fries + " fries<br>";
     }
 
@@ -114,26 +55,58 @@ function calculateTotal() {
         orderText += "- " + ketchup + " ketchup packs<br>";
     }
 
-    orderText += "<br>Total: $" + total.toFixed(2);
+    orderText += "<br><strong>Total: $" + total.toFixed(2) + "</strong><br><br>";
+
+    orderText += '<button onclick="confirmOrder()">Confirm Order</button>';
 
     document.getElementById("output").innerHTML = orderText;
+
+    // Save temporarily
+    window.currentOrder = order;
+}
+
+function confirmOrder() {
+
+    allOrders.push(window.currentOrder);
+
+    let message = "✅ Order confirmed!<br><br>";
+    message += "You have placed " + allOrders.length + " order(s).<br><br>";
+    message += '<button onclick="showAllOrders()">View All Orders</button>';
+
+    document.getElementById("output").innerHTML = message;
+
+    resetOrder();
+}
+
+function showAllOrders() {
+
+    let text = "<strong>All Orders:</strong><br><br>";
+
+    allOrders.forEach((order, index) => {
+        text += "Order #" + (index + 1) + "<br>";
+        text += "- " + order.sandwich + " sandwich<br>";
+        text += "- " + order.drink + " drink<br>";
+
+        if (order.fries !== "none") {
+            text += "- " + order.fries + " fries<br>";
+        }
+
+        if (order.ketchup > 0) {
+            text += "- " + order.ketchup + " ketchup packs<br>";
+        }
+
+        text += "Total: $" + order.total.toFixed(2) + "<br><br>";
+    });
+
+    document.getElementById("output").innerHTML = text;
 }
 
 function resetOrder() {
 
-    // Reset dropdowns
     document.getElementById("sandwich").selectedIndex = 0;
     document.getElementById("drink").selectedIndex = 0;
     document.getElementById("fries").selectedIndex = 0;
-
-    // Reset ketchup number
     document.getElementById("ketchup").value = 0;
-
-    // Clear output text
-    document.getElementById("output").innerHTML = "";
-
 }
-</script>
 
-</body>
-</html>
+</script>
